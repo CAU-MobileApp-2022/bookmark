@@ -12,7 +12,7 @@ class DrawerMenuItems extends StatelessWidget {
           leading: const Icon(Icons.home),
           title: const Text("홈"),
           onTap: () {
-            Navigator.of(context).pop();
+            Navigator.of(context).popUntil((route) => route.isFirst);
             Navigator.pushNamed(context, '/', arguments: {});
           },
         ),
@@ -20,7 +20,7 @@ class DrawerMenuItems extends StatelessWidget {
           leading: const Icon(Icons.numbers),
           title: const Text("책 등록"),
           onTap: () {
-            Navigator.of(context).pop();
+            Navigator.of(context).popUntil((route) => route.isFirst);
             Navigator.pushNamed(context, '/lookup', arguments: {});
           },
         ),
@@ -28,7 +28,7 @@ class DrawerMenuItems extends StatelessWidget {
           leading: const Icon(Icons.numbers),
           title: const Text("북마크 메모"),
           onTap: () {
-            Navigator.of(context).pop();
+            Navigator.of(context).popUntil((route) => route.isFirst);
             Navigator.pushNamed(context, '/bookmark', arguments: {});
           },
         ),
@@ -36,7 +36,7 @@ class DrawerMenuItems extends StatelessWidget {
           leading: const Icon(Icons.numbers),
           title: const Text("독서 알람"),
           onTap: () {
-            Navigator.of(context).pop();
+            Navigator.of(context).popUntil((route) => route.isFirst);
             Navigator.pushNamed(context, '/alarm', arguments: {});
           },
         ),
@@ -44,7 +44,7 @@ class DrawerMenuItems extends StatelessWidget {
           leading: const Icon(Icons.numbers),
           title: const Text("책 리뷰"),
           onTap: () {
-            Navigator.of(context).pop();
+            Navigator.of(context).popUntil((route) => route.isFirst);
             Navigator.pushNamed(context, '/review', arguments: {});
           },
         ),
@@ -52,7 +52,7 @@ class DrawerMenuItems extends StatelessWidget {
           leading: const Icon(Icons.numbers),
           title: const Text("베스트셀러"),
           onTap: () {
-            Navigator.of(context).pop();
+            Navigator.of(context).popUntil((route) => route.isFirst);
             Navigator.pushNamed(context, '/bestseller', arguments: {});
           },
         ),
