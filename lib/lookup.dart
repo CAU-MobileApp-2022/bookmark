@@ -12,8 +12,8 @@ class _LookUpPageState extends State<LookUpPage> {
   @override
   Widget build(BuildContext context) {
     final bookLookupInfoList = [
-      BookLookupInfo( 1, "The Selfish Gene", "Richard Dawkins"),
-      BookLookupInfo( 2, "Design Patterns","Erich Gamma, Richard Helm, Ralph Johnson, John Vlissides"),
+      BookLookupInfo( id: 1, title: "The Selfish Gene", author: "Richard Dawkins"),
+      BookLookupInfo( id: 2, title: "Design Patterns", author: "Erich Gamma, Richard Helm, Ralph Johnson, John Vlissides"),
     ];
 
     return Scaffold(
@@ -27,10 +27,11 @@ class _LookUpPageState extends State<LookUpPage> {
             child: Row(
               mainAxisAlignment: MainAxisAlignment.center,
               children: [
+                /*
                 ElevatedButton(
                   onPressed: () {},
                   child: Text('Delete Book'),
-                ),
+                ),*/
                 SizedBox(width: 20),
                 ElevatedButton(
                   onPressed: () {
@@ -62,16 +63,23 @@ class _LookUpPageState extends State<LookUpPage> {
                               fontWeight: FontWeight.bold,
                             ),
                           ),
-                          Text(bookLookupInfoList[index].author),
+                          Text(bookLookupInfoList[index].author!),
                         ],
                       ),
-                      IconButton(
+                      PopupMenuButton(
                         icon: Icon(Icons.more_vert),
-                        onPressed: () {
-                          setState(() {
-                          });
+                        onSelected: (value) {
+                           // your logic
                         },
-                      )
+                        itemBuilder: (BuildContext bc) {
+                          return [
+                            PopupMenuItem(
+                              child: Text("Delete"),
+                              value: index,
+                            ),
+                          ];
+                        },
+                      ),
                     ],
                   ),
                 ),
@@ -152,13 +160,13 @@ class LookupSelectionPage extends StatelessWidget {
 }
 
 class BookLookupInfo {
-  int id;
-  String title;
-  String author;
+  int? id;
+  String? title;
+  String? author;
 
-  BookLookupInfo (
-      this.id,
-      this.title,
-      this.author,
-  );
+  BookLookupInfo ({
+    this.id,
+    this.title,
+    this.author,
+  });
 }
