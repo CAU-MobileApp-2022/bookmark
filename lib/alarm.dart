@@ -1,6 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_app/sidebar.dart';
 
+import 'package:flutter_time_picker_spinner/flutter_time_picker_spinner.dart';
+
 class AlarmPage extends StatefulWidget {
   const AlarmPage({Key? key}) : super(key: key);
 
@@ -29,14 +31,15 @@ class _AlarmPageState extends State<AlarmPage> {
             child: Row(
               mainAxisAlignment: MainAxisAlignment.center,
               children: [
+                /*
                 ElevatedButton(
                   onPressed: () {},
                   child: Text('Delete Alarm'),
-                ),
+                ),*/
                 SizedBox(width: 20),
                 ElevatedButton(
                   onPressed: () {
-                    Navigator.pushNamed(context, '/lookupSelection', arguments: {});
+                    Navigator.pushNamed(context, '/alarmSetting', arguments: {});
                     },
                   child: Text('Add new Alarm'),
                 ),
@@ -54,6 +57,16 @@ class _AlarmPageState extends State<AlarmPage> {
                   child: Row(
                     mainAxisAlignment: MainAxisAlignment.spaceBetween,
                     children: <Widget>[
+                      IconButton(
+                        icon: alarmInfoList[index].isActive
+                            ? Icon(Icons.alarm, color: Colors.deepOrange)
+                            : Icon(Icons.alarm_off),
+                        onPressed: () {
+                          setState(() {
+                            alarmInfoList[index].isActive = !alarmInfoList[index].isActive;
+                          });
+                        },
+                      ),
                       Column(
                         crossAxisAlignment: CrossAxisAlignment.start,
                         children: <Widget>[
@@ -67,16 +80,20 @@ class _AlarmPageState extends State<AlarmPage> {
                           ),
                         ],
                       ),
-                      IconButton(
-                        icon: alarmInfoList[index].isActive
-                            ? Icon(Icons.alarm, color: Colors.deepOrange)
-                            : Icon(Icons.alarm_off),
-                        onPressed: () {
-                          setState(() {
-                            alarmInfoList[index].isActive = !alarmInfoList[index].isActive;
-                          });
+                      PopupMenuButton(
+                        icon: Icon(Icons.more_vert),
+                        onSelected: (value) {
+                           // your logic
                         },
-                      )
+                        itemBuilder: (BuildContext bc) {
+                          return [
+                            PopupMenuItem(
+                              child: Text("Delete"),
+                              value: index,
+                            ),
+                          ];
+                        },
+                      ),
                     ],
                   ),
                 ),
@@ -98,6 +115,93 @@ class _AlarmPageState extends State<AlarmPage> {
     );
   }
 }
+
+class AlarmSettingPage extends StatefulWidget {
+  const AlarmSettingPage({Key? key}) : super(key: key);
+
+  @override
+  State<AlarmSettingPage> createState() => _AlarmSettingPageState();
+}
+
+class _AlarmSettingPageState extends State<AlarmSettingPage> {
+  DateTime? _dateTime;
+  final _alarmMemoController = TextEditingController();
+
+  @override
+  Widget build(BuildContext context) {
+    return Scaffold(
+      appBar: AppBar(
+        title: const Text('Setting Alarm'),
+        leading:  IconButton(
+          onPressed: () {
+            Navigator.pop(context);
+          },
+          icon: Icon(Icons.arrow_back)
+        ),
+      ),
+      body: Column(
+        children: [
+          Container(
+            margin: EdgeInsets.all(30.0),
+            padding: EdgeInsets.all(10.0),
+            decoration: BoxDecoration(
+              borderRadius: BorderRadius.circular(50),
+              border: Border.all(color: Colors.black, width: 1)
+            ),
+            child: TimePickerSpinner(
+              is24HourMode: true,
+              minutesInterval: 5,
+              normalTextStyle: TextStyle(
+                fontSize: 24,
+              ),
+              highlightedTextStyle: TextStyle(
+                fontSize: 24,
+                fontWeight: FontWeight.bold
+              ),
+              spacing: 100,
+              itemHeight: 80,
+              isForce2Digits: false,
+              onTimeChange: (time) {
+                setState(() {
+                  _dateTime = time;
+                });
+              },
+            ),
+          ),
+          SizedBox(height: 20),
+          Padding(
+            padding: const EdgeInsets.all(30.0),
+            child: TextField(
+              decoration: InputDecoration(
+                labelText: 'Alarm memo',
+                border: OutlineInputBorder()
+              ),
+              controller: _alarmMemoController,
+            ),
+          ),
+          SizedBox(height: 20),
+          ElevatedButton(
+            onPressed: (){
+
+            },
+            child: Text('Enter')
+          ),
+        ],
+      ),
+      drawer: Drawer(
+        child:SingleChildScrollView(
+          child: Column(
+            crossAxisAlignment: CrossAxisAlignment.stretch,
+            children: const <Widget>[
+              DrawerMenuItems(),
+            ],
+          ),
+        )
+      ),
+    );
+  }
+}
+
 
 class AlarmInfo {
   String name;
