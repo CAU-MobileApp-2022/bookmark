@@ -25,6 +25,7 @@ class MyApp extends StatelessWidget {
       routes: {
         '/': (context) => const MyHomePage(),
         '/lookup': (context) => const LookUpPage(),
+        '/lookupSelection': (context) => const LookupSelectionPage(),
         '/bookmark': (context) => const BookmarkPage(),
         '/alarm': (context) => const AlarmPage(),
         '/review': (context) => const ReviewPage(),
