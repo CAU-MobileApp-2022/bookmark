@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_app/sidebar.dart';
+import 'barcode.dart';
 
 class LookUpPage extends StatefulWidget {
   const LookUpPage({Key? key}) : super(key: key);
@@ -9,13 +10,22 @@ class LookUpPage extends StatefulWidget {
 }
 
 class _LookUpPageState extends State<LookUpPage> {
+
+  Future<BookLookupInfo> _navigateAndDisplaySelection(BuildContext context, String name) async {
+    return await Navigator.pushNamed(
+        context, '/$name', arguments: {}) as BookLookupInfo;
+  }
+
+  int _counter=0;
+  List bookLookupInfoList = [
+    BookLookupInfo( id: 1, title: "The Selfish Gene", author: "Richard Dawkins", url: "https://shopping-phinf.pstatic.net/main_3247666/32476662559.20220520101441.jpg",),
+    BookLookupInfo( id: 2, title: "Design Patterns", author: "Erich Gamma, Richard Helm, Ralph Johnson, John Vlissides", url: "https://shopping-phinf.pstatic.net/main_3244388/32443882215.20220518201208.jpg"),
+  ];
+  _onSelected(dynamic val) {
+    setState(() => bookLookupInfoList.removeAt(val));
+  }
   @override
   Widget build(BuildContext context) {
-    final bookLookupInfoList = [
-      BookLookupInfo( id: 1, title: "The Selfish Gene", author: "Richard Dawkins"),
-      BookLookupInfo( id: 2, title: "Design Patterns", author: "Erich Gamma, Richard Helm, Ralph Johnson, John Vlissides"),
-    ];
-
     return Scaffold(
       appBar: AppBar(
         title: const Text('Lookup'),
@@ -33,9 +43,26 @@ class _LookUpPageState extends State<LookUpPage> {
                   child: Text('Delete Book'),
                 ),*/
                 SizedBox(width: 20),
-                ElevatedButton(
-                  onPressed: () {
-                    Navigator.pushNamed(context, '/lookupSelection', arguments: {});
+                ElevatedButton (
+                  onPressed: () async {
+                    BookLookupInfo result = await _navigateAndDisplaySelection(context, 'lookupSelection');
+                    print(result.id);
+                    print(result.author);
+                    print(result.title);
+
+                    if (result != null && result.id!=-1){
+                      print(bookLookupInfoList.length);
+                      setState((){
+                        print("not null");
+                        print(_counter);
+                        _counter++;
+                        print(_counter);
+                        result.id = bookLookupInfoList.length+1;
+                        bookLookupInfoList.add(result);
+                      });
+                      print(bookLookupInfoList.length);
+                    }
+
                     },
                   child: Text('Add new Book'),
                 ),
@@ -44,7 +71,7 @@ class _LookUpPageState extends State<LookUpPage> {
           ),
           ListView.builder(
             scrollDirection: Axis.vertical,
-            shrinkWrap: true ,
+            shrinkWrap: true,
             itemCount: bookLookupInfoList.length,
             itemBuilder: (context, index){
               return Card(
@@ -53,25 +80,41 @@ class _LookUpPageState extends State<LookUpPage> {
                   child: Row(
                     mainAxisAlignment: MainAxisAlignment.spaceBetween,
                     children: <Widget>[
+                      Image.network(
+                          bookLookupInfoList[index].url!,
+                          width: 50,
+                          fit: BoxFit.fill
+                      ),
+                  Container(
+                    width: 250,
+                      child:
                       Column(
                         crossAxisAlignment: CrossAxisAlignment.start,
                         children: <Widget>[
                           Text(
-                            '${bookLookupInfoList[index].title}',
+                            '${bookLookupInfoList[index].title} ${_counter}',
                             style: TextStyle(
-                              fontSize: 30,
+                              fontSize: 20,
                               fontWeight: FontWeight.bold,
                             ),
                           ),
-                          Text(bookLookupInfoList[index].author!),
+                          Container(
+                            width: 300,
+                            child:
+                            Text(bookLookupInfoList[index].author!,
+                              overflow: TextOverflow.fade,
+                              style: TextStyle(
+                              fontSize: 10,
+                            ),
+                            ),
+                            )
                         ],
-                      ),
+                      )
+                  ),
                       PopupMenuButton(
+                        onSelected: _onSelected,
                         icon: Icon(Icons.more_vert),
-                        onSelected: (value) {
-                           // your logic
-                        },
-                        itemBuilder: (BuildContext bc) {
+                        itemBuilder: (context) {
                           return [
                             PopupMenuItem(
                               child: Text("Delete"),
@@ -105,6 +148,12 @@ class _LookUpPageState extends State<LookUpPage> {
 class LookupSelectionPage extends StatelessWidget {
   const LookupSelectionPage({Key? key}) : super(key: key);
 
+  Future<BookLookupInfo> _navigateAndDisplaySelection(BuildContext context, String name) async {
+    final result = await Navigator.pushNamed(
+        context, '/$name', arguments: {}) as BookLookupInfo;
+    print("goog");
+    return result;
+  }
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -123,25 +172,22 @@ class LookupSelectionPage extends StatelessWidget {
           mainAxisAlignment: MainAxisAlignment.center,
           children: [
             ElevatedButton(
-              onPressed: () {},
+              onPressed: () async {
+                final result = await _navigateAndDisplaySelection(context, 'barcode');
+
+                if (result != null && result.id!=-1) Navigator.pop(context, result);
+              },
               child: Text('barcode')
             ),
             SizedBox(height: 20),
             ElevatedButton(
-              onPressed: () {},
+                onPressed: () async {
+                  final result = await _navigateAndDisplaySelection(context, 'search');
+
+                  if (result != null && result.id!=-1) Navigator.pop(context, result);
+                },
               child: Text('search')
             ),
-            SizedBox(height: 20),
-            ElevatedButton(
-              onPressed: () {},
-              child: Text('ISBN')
-            ),
-            SizedBox(height: 20),
-            ElevatedButton(
-              onPressed: () {},
-              child: Text('e-book')
-            ),
-            SizedBox(height: 20),
           ],
         ),
       ),
@@ -163,10 +209,16 @@ class BookLookupInfo {
   int? id;
   String? title;
   String? author;
+  String? url;
 
   BookLookupInfo ({
     this.id,
     this.title,
     this.author,
+    this.url
   });
+  BookLookupInfo.clone(BookLookupInfo classA) : this(
+      id: classA.id, title:classA.title,
+      author:classA.author, url:classA.url );
+
 }

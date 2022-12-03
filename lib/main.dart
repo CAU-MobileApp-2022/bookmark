@@ -5,6 +5,8 @@ import 'package:flutter_app/bookmark.dart';
 import 'package:flutter_app/lookup.dart';
 import 'package:flutter_app/review.dart';
 import 'package:flutter_app/sidebar.dart';
+import 'package:flutter_app/barcode.dart';
+import 'package:flutter_app/search.dart';
 
 void main() {
   runApp(const MyApp());
@@ -32,6 +34,8 @@ class MyApp extends StatelessWidget {
         '/alarmSetting': (context) => const AlarmSettingPage(),
         '/review': (context) => const ReviewPage(),
         '/bestseller': (context) => const BestSellerPage(),
+        '/barcode': (context) => const BarcodePage(),
+        '/search': (context) => const SearchPage(),
       },
       // home: const MyHomePage(),
     );
