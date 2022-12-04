@@ -40,6 +40,9 @@ dependencies:
   qr_code_scanner: ^1.0.1
   flutter_barcode_scanner: ^2.0.0
   http: ^0.13.5
+  html: ^0.15.1
+  xml: ^5.1.2
+  url_launcher: ^6.1.7
 
 dev_dependencies:
   flutter_test:
