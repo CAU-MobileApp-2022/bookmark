@@ -1,0 +1,39 @@
+{
+  "project_info": {
+    "project_number": "291505799572",
+    "project_id": "cau-mobileapp-2022-team6",
+    "storage_bucket": "cau-mobileapp-2022-team6.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:291505799572:android:23174b5d65f23a040b8f81",
+        "android_client_info": {
+          "package_name": "com.example.flutter_app"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "291505799572-acuq4mmvpd45mh5gfkr5ti68aroejrhb.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyC7ofmHiOZEk6xcw9qPuZkaIaKpWZbmGgw"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": [
+            {
+              "client_id": "291505799572-acuq4mmvpd45mh5gfkr5ti68aroejrhb.apps.googleusercontent.com",
+              "client_type": 3
+            }
+          ]
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}
