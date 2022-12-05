@@ -1,3 +1,6 @@
+import 'package:android_alarm_manager_plus/android_alarm_manager_plus.dart';
+import 'package:firebase_core/firebase_core.dart';
+import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_app/alarm.dart';
 import 'package:flutter_app/best_seller.dart';
@@ -7,9 +10,18 @@ import 'package:flutter_app/review.dart';
 import 'package:flutter_app/sidebar.dart';
 import 'package:flutter_app/barcode.dart';
 import 'package:flutter_app/search.dart';
+import 'package:provider/provider.dart';
+import 'LoginPage.dart';
+import 'firebase_options.dart';
 
-void main() {
-  runApp(const MyApp());
+void main() async {
+  WidgetsFlutterBinding.ensureInitialized();
+  await Firebase.initializeApp(
+    options: DefaultFirebaseOptions.currentPlatform,
+  );
+  await AndroidAlarmManager.initialize();
+
+  runApp(MyApp());
 }
 
 class MyApp extends StatelessWidget {
@@ -23,9 +35,8 @@ class MyApp extends StatelessWidget {
       theme: ThemeData(
         primarySwatch: Colors.amber,
       ),
-      initialRoute: '/',
       routes: {
-        '/': (context) => const MyHomePage(),
+        '/home': (context) => const MyHomePage(),
         '/lookup': (context) => const LookUpPage(),
         '/lookupSelection': (context) => const LookupSelectionPage(),
         '/bookmark': (context) => const BookmarkPage(),
@@ -37,7 +48,16 @@ class MyApp extends StatelessWidget {
         '/barcode': (context) => const BarcodePage(),
         '/search': (context) => const SearchPage(),
       },
-      // home: const MyHomePage(),
+      home: StreamBuilder(
+        stream: FirebaseAuth.instance.authStateChanges(),
+        builder: (context, snapshot) {
+          if(snapshot.hasData) {
+            return const MyHomePage();
+          } else {
+            return const LoginPage();
+          }
+        },
+      ),
     );
   }
 }
