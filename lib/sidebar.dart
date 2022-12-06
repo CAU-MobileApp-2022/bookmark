@@ -13,7 +13,7 @@ class DrawerMenuItems extends StatelessWidget {
           title: const Text("홈"),
           onTap: () {
             Navigator.of(context).popUntil((route) => route.isFirst);
-            Navigator.pushNamed(context, '/', arguments: {});
+            Navigator.pushNamed(context, '/home', arguments: {});
           },
         ),
         ListTile(

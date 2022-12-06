@@ -5,6 +5,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_app/alarm.dart';
 import 'package:flutter_app/best_seller.dart';
 import 'package:flutter_app/bookmark.dart';
+
 import 'package:flutter_app/lookup.dart';
 import 'package:flutter_app/review.dart';
 import 'package:flutter_app/sidebar.dart';
@@ -89,8 +90,10 @@ class _MyHomePageState extends State<MyHomePage> {
           title: const Text('북마크 앱'),
           actions: [
             IconButton(
-              icon: const Icon(Icons.add),
-              onPressed: (){},
+              onPressed: () {
+                FirebaseAuth.instance.signOut();
+              },
+              icon: const Icon(Icons.logout)
             ),
           ],
         ),
