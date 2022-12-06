@@ -117,7 +117,7 @@ class _LookUpPageState extends State<LookUpPage> {
                         itemBuilder: (context) {
                           return [
                             PopupMenuItem(
-                              child: Text("Delete"),
+                              child: Text("삭제하기"),
                               value: index,
                             ),
                           ];

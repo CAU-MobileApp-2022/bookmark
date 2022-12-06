@@ -16,7 +16,9 @@ class _ReviewPageState extends State<ReviewPage> {
       BookReview( id: 1, title: "The Selfish Gene", author: "Richard Dawkins",review: "리뷰",rating: 1.5),
       BookReview( id: 2, title: "Design Patterns", author: "Erich Gamma, Richard Helm, Ralph Johnson, John Vlissides" , review: "메모",rating: 4.0),
     ];
-
+    _onSelected(dynamic val) {
+      setState(() => bookreviewList.removeAt(val));
+    }
     return Scaffold(
       appBar: AppBar(
         title: const Text('책 리뷰'),
@@ -44,7 +46,7 @@ class _ReviewPageState extends State<ReviewPage> {
                           children: <Widget>[
                             Text(
                               '${bookreviewList[index].title}',
-                              style: TextStyle(
+                              style: const TextStyle(
                                 fontSize: 30,
                                 fontWeight: FontWeight.bold,
                               ),
@@ -52,13 +54,18 @@ class _ReviewPageState extends State<ReviewPage> {
                             Text(bookreviewList[index].author!),
                           ],
                         ),
-                        IconButton(
-                          icon: Icon(Icons.more_vert),
-                          onPressed: () {
-                            setState(() {
-                            });
+                        PopupMenuButton(
+                          onSelected: _onSelected,
+                          icon: const Icon(Icons.more_vert),
+                          itemBuilder: (context) {
+                            return [
+                              PopupMenuItem(
+                                child: Text("삭제하기"),
+                                value: index,
+                              ),
+                            ];
                           },
-                        )
+                        ),
                       ],
                     ),
                   ),
@@ -102,7 +109,7 @@ class _BookReviewDetailPageState extends State<BookReviewDetailPage> {
             onPressed: () {
               Navigator.pop(context);
             },
-            icon: Icon(Icons.arrow_back)
+            icon: const Icon(Icons.arrow_back)
         ),
       ),
       body: SingleChildScrollView(
@@ -122,18 +129,18 @@ class _BookReviewDetailPageState extends State<BookReviewDetailPage> {
                 mainAxisAlignment: MainAxisAlignment.center,
 
                 children: [
-                  SizedBox(height: 60, width: 100,),
+                  const SizedBox(height: 60, width: 100,),
                   Text('${args.title}',
                     style: const TextStyle(
                       fontWeight: FontWeight.bold,
                       fontSize: 25,
                     ),
                   ),
-                  SizedBox(height: 2, width: 100,),
+                  const SizedBox(height: 2, width: 100,),
                   SmoothStarRating(rating: rating,size: 45,starCount: 5,allowHalfRating: false,),
-                  SizedBox(height: 45, width: 100,),
+                  const SizedBox(height: 45, width: 100,),
                   Container(
-                    constraints: BoxConstraints(maxWidth: 500),
+                    constraints: const BoxConstraints(maxWidth: 500),
                     child: Text('${args.review}',
                       style: const TextStyle(
                         height: 2,
