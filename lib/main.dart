@@ -43,6 +43,7 @@ class MyApp extends StatelessWidget {
         '/lookupSelection': (context) => const LookupSelectionPage(),
         '/bookmark': (context) => const BookmarkPage(),
         '/bookmarkDetail': (context) => const BookmarkDetailPage(),
+        '/bookmarkEdit': (context) => const BookmarkEditPage(),
         '/alarm': (context) => const AlarmPage(),
         '/alarmSetting': (context) => const AlarmSettingPage(),
         '/review': (context) => const ReviewPage(),

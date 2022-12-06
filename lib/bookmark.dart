@@ -55,7 +55,7 @@ class _BookmarkPageState extends State<BookmarkPage> {
                 itemBuilder: (context, index){
                   return GestureDetector(
                     onTap: () {
-                      final bookmark = Bookmark( title: docs[index]['title'], author: docs[index]['author'],memo: docs[index]['bookmark']);
+                      final bookmark = Bookmark(title: docs[index]['title'], author: docs[index]['author'],memo: docs[index]['bookmark']);
                       Navigator.pushNamed(context, '/bookmarkDetail', arguments: bookmark);
                     },
                     child: Card(
@@ -152,29 +152,35 @@ class BookmarkDetailPage extends StatelessWidget {
                   'assets/images/note_background_1.jpg',
                 ),
               ),
-              Column(
-                mainAxisAlignment: MainAxisAlignment.center,
-
-                children: [
-                  SizedBox(height: 58, width: 100,),
-                  Text('${args.title}',
-                    style: TextStyle(
-                      fontWeight: FontWeight.bold,
-                      fontSize: 25,
-                    ),
-                  ),
-                  SizedBox(height: 38, width: 100,),
-                  Container(
-                    constraints: BoxConstraints(maxWidth: 500),
-                    child: Text('${args.memo}',
+              Padding(
+                padding: const EdgeInsets.all(8.0),
+                child: Column(
+                  mainAxisAlignment: MainAxisAlignment.center,
+                  children: [
+                    SizedBox(height: 58, width: 100,),
+                    Text('${args.title}',
+                      textAlign: TextAlign.center,
                       style: TextStyle(
-                        height: 2,
                         fontWeight: FontWeight.bold,
-                        fontSize: 17,
+                        fontSize: 25,
                       ),
                     ),
-                  ),
-                ],
+                    SizedBox(height: 38, width: 100,),
+                    Container(
+                      constraints: BoxConstraints(maxWidth: 500),
+                      child: Padding(
+                        padding: const EdgeInsets.fromLTRB(20.0,8,20,8),
+                        child: Text('${args.memo}',
+                          style: TextStyle(
+                            height: 2,
+                            fontWeight: FontWeight.bold,
+                            fontSize: 17,
+                          ),
+                        ),
+                      ),
+                    ),
+                  ],
+                ),
               ),
             ],
           ),
@@ -183,8 +189,102 @@ class BookmarkDetailPage extends StatelessWidget {
       floatingActionButton: Container(
         padding: EdgeInsets.fromLTRB(0, 0, 50, 50),
         child: FloatingActionButton(
-          onPressed: (){},
+          onPressed: (){
+            Navigator.pushNamed(context, '/bookmarkEdit', arguments: args);
+          },
           child: Text('edit'),
+        ),
+      ),
+      drawer: Drawer(
+          child:SingleChildScrollView(
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.stretch,
+              children: const <Widget>[
+                DrawerMenuItems(),
+              ],
+            ),
+          )
+      ),
+    );
+  }
+}
+
+
+class BookmarkEditPage extends StatelessWidget {
+  const BookmarkEditPage({Key? key}) : super(key: key);
+
+
+  @override
+  Widget build(BuildContext context) {
+    final args = ModalRoute.of(context)?.settings.arguments as Bookmark;
+
+    return Scaffold(
+      appBar: AppBar(
+        title: Text('북마크 [ ${args.title} ]'),
+        leading:  IconButton(
+          onPressed: () {
+            Navigator.pop(context);
+          },
+          icon: Icon(Icons.arrow_back)
+        ),
+      ),
+      body: SingleChildScrollView(
+        child: Container(
+          alignment: Alignment.center,
+          child: Stack(
+            alignment: Alignment.topCenter,
+            children: [
+              Container(
+                alignment: Alignment.center,
+                width: double.infinity,
+                child: Image.asset(
+                  'assets/images/note_background_1.jpg',
+                ),
+              ),
+              Padding(
+                padding: const EdgeInsets.all(8.0),
+                child: Column(
+                  mainAxisAlignment: MainAxisAlignment.center,
+                  children: [
+                    SizedBox(height: 58, width: 100,),
+                    Text('${args.title}',
+                      textAlign: TextAlign.center,
+                      style: TextStyle(
+                        fontWeight: FontWeight.bold,
+                        fontSize: 25,
+                      ),
+                    ),
+                    SizedBox(height: 38, width: 100,),
+                    Container(
+                      constraints: BoxConstraints(maxWidth: 500),
+                      child: Padding(
+                        padding: const EdgeInsets.fromLTRB(20.0,8,20,8),
+                        child: TextFormField(
+                          keyboardType: TextInputType.multiline,
+                          initialValue:'${args.memo}',
+                          maxLines: 8,
+                          style: TextStyle(
+                            height: 2,
+                            fontWeight: FontWeight.bold,
+                            fontSize: 17,
+                          ),
+                        ),
+                      ),
+                    ),
+                  ],
+                ),
+              ),
+            ],
+          ),
+        ),
+      ),
+      floatingActionButton: Container(
+        padding: EdgeInsets.fromLTRB(0, 0, 50, 50),
+        child: FloatingActionButton(
+          onPressed: () async {
+            Navigator.pop(context);
+          },
+          child: Text('save'),
         ),
       ),
       drawer: Drawer(
