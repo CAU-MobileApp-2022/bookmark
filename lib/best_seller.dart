@@ -79,7 +79,7 @@ class _BestSellerPageState extends State<BestSellerPage>{
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: AppBar(title: const Text('Best Seller')),
+      appBar: AppBar(title: const Text('베스트 셀러')),
       body: ListView.separated(
         itemCount: best.length,
         separatorBuilder: (ctx, index) => Divider(
@@ -109,8 +109,8 @@ class _BestSellerPageState extends State<BestSellerPage>{
                               style: TextStyle(
                                   color: Colors.black,
                                   height: 1.4,
-                                  fontSize: 22.0,
-                                  fontWeight: FontWeight.bold,
+                                  fontSize: 20.0,
+                                  fontFamily: 'Jua-Regular',
                                   )),
                         )),
                   ],
@@ -129,20 +129,18 @@ class _BestSellerPageState extends State<BestSellerPage>{
                             text: TextSpan(
                                 text: best[index]['description'],
                                 style: TextStyle(
-                                    color: Colors.green,
+                                    color: Colors.brown,
                                     height: 1.4,
-                                    fontSize: 16.0,
-                                    fontFamily: 'NanumSquareRegular')),
+                                    fontSize: 14.0,
+                                    fontFamily: 'Jua-Regular',)),
                           ),
                         )),
                   ],
                 ),
                 Row(
-                  mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+                  mainAxisAlignment: MainAxisAlignment.end,
                   children: [
                     Container(
-                      height: 30,
-                      width: 100,
                       child: Flexible(
                           child: RichText(
                             overflow: TextOverflow.ellipsis,
@@ -154,13 +152,11 @@ class _BestSellerPageState extends State<BestSellerPage>{
                                     color: Colors.amber,
                                     height: 1.4,
                                     fontSize: 16.0,
-                                    fontWeight: FontWeight.bold,
-                                    fontFamily: 'NanumSquareRegular')),
+                                    fontFamily: 'Jua-Regular',)),
                           )),
                     ),
+                    SizedBox(width: 10,),
                     Container(
-                      height: 30,
-                      width: 100,
                       child: Flexible(
                           child: RichText(
                             overflow: TextOverflow.ellipsis,
@@ -172,25 +168,22 @@ class _BestSellerPageState extends State<BestSellerPage>{
                                     color: Colors.indigo,
                                     height: 1.4,
                                     fontSize: 16.0,
-                                    fontWeight: FontWeight.bold,
-                                    fontFamily: 'NanumSquareRegular')),
+                                    fontFamily: 'Jua-Regular')),
                           )),
                     ),
                   ],
                 ),
                 Row(
-                  mainAxisAlignment: MainAxisAlignment.center,
+                  mainAxisAlignment: MainAxisAlignment.end,
                   children: [
-                    Text('정가: ${best[index]['priceStandard']}',
+                    Text('정가: ${best[index]['priceStandard']}원',
                       style: const TextStyle(
                           color: Colors.black,
-                        fontWeight: FontWeight.bold,
                       ),
                     ),
-                    Text('  할인가: ${best[index]['priceSales']}',
+                    Text('  할인가: ${best[index]['priceSales']}원',
                       style: const TextStyle(
                         color: Colors.black,
-                        fontWeight: FontWeight.bold,
                       ),
                     ),
                   ],

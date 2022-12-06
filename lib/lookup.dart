@@ -41,7 +41,7 @@ class _LookUpPageState extends State<LookUpPage> {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: const Text('Lookup'),
+        title: const Text('책 목록'),
       ),
       body: Column(
         children: [
@@ -75,32 +75,68 @@ class _LookUpPageState extends State<LookUpPage> {
                       'review': "",
                     });
                     },
-                  child: const Text('Add new Book'),
+                  child: Text('등록하기'),
                 ),
               ],
         ),
           ),
-    Expanded(
-          child: StreamBuilder(
-            stream: FirebaseFirestore.instance.collection("books").orderBy('timestamp').snapshots(),
-            builder: (context, snapshot) {
-              if (snapshot.connectionState == ConnectionState.waiting) {
-                return const Center(child: CircularProgressIndicator());
-              }
-              final docs = snapshot.data!.docs;
-              return ListView.builder(
-                itemCount: docs.length,
-                itemBuilder: (context, index) {
-                  return BookElement(
-                    isMe: loggedUser!.uid,
-                    title: docs[index]['title'],
-                    author: docs[index]['author'],
-                    imageUrl: docs[index]['imageUrl'],
-                    bookmark: docs[index]['bookmark'],
-                    review: docs[index]['review'],
-                    docId: docs[index].id,
-                  );
-                },
+          ListView.builder(
+            scrollDirection: Axis.vertical,
+            shrinkWrap: true,
+            itemCount: bookLookupInfoList.length,
+            itemBuilder: (context, index){
+              return Card(
+                child: Padding(
+                  padding: const EdgeInsets.all(10),
+                  child: Row(
+                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                    children: <Widget>[
+                      Image.network(
+                          bookLookupInfoList[index].url!,
+                          width: 50,
+                          fit: BoxFit.fill
+                      ),
+                  Container(
+                    width: 250,
+                      child:
+                      Column(
+                        crossAxisAlignment: CrossAxisAlignment.start,
+                        children: <Widget>[
+                          Text(
+                            '${bookLookupInfoList[index].title} ${_counter}',
+                            style: TextStyle(
+                              fontSize: 20,
+                              fontWeight: FontWeight.bold,
+                            ),
+                          ),
+                          Container(
+                            width: 300,
+                            child:
+                            Text(bookLookupInfoList[index].author!,
+                              overflow: TextOverflow.fade,
+                              style: TextStyle(
+                              fontSize: 10,
+                            ),
+                            ),
+                            )
+                        ],
+                      )
+                  ),
+                      PopupMenuButton(
+                        onSelected: _onSelected,
+                        icon: Icon(Icons.more_vert),
+                        itemBuilder: (context) {
+                          return [
+                            PopupMenuItem(
+                              child: Text("삭제하기"),
+                              value: index,
+                            ),
+                          ];
+                        },
+                      ),
+                    ],
+                  ),
+                ),
               );
             },
           )),
