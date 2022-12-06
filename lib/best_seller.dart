@@ -79,13 +79,12 @@ class _BestSellerPageState extends State<BestSellerPage>{
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: AppBar(title: const Text('베스트 셀러')),
-      body: ListView.separated(
+      appBar: AppBar(title: const Text('Best Seller')),
+      body: ListView.builder(
+        scrollDirection: Axis.vertical,
+        shrinkWrap: true,
         itemCount: best.length,
-        separatorBuilder: (ctx, index) => Divider(
-          indent: 8,
-          endIndent: 8,
-        ),
+
         itemBuilder: (ctx, index) => ListTile(
           onTap: () async => {
             log(best[index]['mobileLink'].toString()),
@@ -93,101 +92,91 @@ class _BestSellerPageState extends State<BestSellerPage>{
 
             //  await launchUrl(Uri.parse(best[index]['mobileLink'])),
           },
-          title: Padding(
-            padding: const EdgeInsets.all(8.0),
-            child: Column(
-              children: [
-                Row(
-                  children: [
-                    Flexible(
-                        child: RichText(
-                          overflow: TextOverflow.ellipsis,
-                          maxLines: 1,
-                          strutStyle: StrutStyle(fontSize: 16.0),
-                          text: TextSpan(
-                              text: best[index]['title'],
-                              style: TextStyle(
-                                  color: Colors.black,
-                                  height: 1.4,
-                                  fontSize: 20.0,
-                                  fontFamily: 'Jua-Regular',
-                                  )),
-                        )),
-                  ],
+          title: Card(
+            child: Row(
+              mainAxisAlignment: MainAxisAlignment.spaceBetween,
+              children: <Widget>[
+                Image.network(
+                    best[index]['image']!,
+                    width: 100,
+                    fit: BoxFit.fill
                 ),
-                Row(
-                  mainAxisAlignment: MainAxisAlignment.center,
-                  children: [
-                    Image.network(best[index]['image']),
-                    Flexible(
-                        child: Padding(
-                          padding: const EdgeInsets.all(8.0),
-                          child: RichText(
-                            overflow: TextOverflow.ellipsis,
-                            maxLines: 5,
-                            strutStyle: StrutStyle(fontSize: 16.0),
-                            text: TextSpan(
-                                text: best[index]['description'],
-                                style: TextStyle(
-                                    color: Colors.brown,
-                                    height: 1.4,
-                                    fontSize: 14.0,
-                                    fontFamily: 'Jua-Regular',)),
+                Container(
+                    width: 250,
+                    child:
+                    Column(
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      children: <Widget>[
+                        Text(
+                          "${best[index]['title']}",
+                          style: const TextStyle(
+                            //overflow: TextOverflow.ellipsis,
+                            fontSize: 20,
+                            fontWeight: FontWeight.bold,
                           ),
-                        )),
-                  ],
+                        ),
+                        Row(
+                          mainAxisAlignment: MainAxisAlignment.start,
+                          children: [
+                            Container(
+                              width: 100,
+                              child:
+                              Text('저자: ${best[index]['author']}',
+                                overflow: TextOverflow.ellipsis,
+                                style: const TextStyle(
+                                  fontSize: 12,
+                                  color: Colors.green,
+                                  fontWeight: FontWeight.bold,
+                                ),
+                              ),
+                            ),
+
+                            Container(
+                              width: 100,
+                              child:
+                              Text('출판사 : ${best[index]['publisher']}',
+                                overflow: TextOverflow.ellipsis,
+                                style: const TextStyle(
+                                  fontSize: 12,
+                                  color: Colors.indigo,
+                                  fontWeight: FontWeight.bold,
+                                ),
+                              ),
+                            ),
+                          ],
+                        ),
+                        Row(
+                          mainAxisAlignment: MainAxisAlignment.start,
+                          children: [
+                            Container(
+                              width: 250,
+                              child:
+                              Text('[정가: ${best[index]['priceStandard']}원] / [할인가 : ${best[index]['priceSales']}원]',
+                                overflow: TextOverflow.fade,
+                                style: const TextStyle(
+                                  fontSize: 12,
+                                  fontWeight: FontWeight.bold,
+                                ),
+                              ),
+                            ),
+                          ],
+                        ),
+                        Container(
+                          width: 300,
+                          height: 50,
+                          child:
+                          Text('${best[index]['description']}',
+                            overflow: TextOverflow.fade,
+                            style: const TextStyle(
+                              color: Colors.grey,
+                              fontSize: 12,
+                              fontWeight: FontWeight.bold,
+                            ),
+                          ),
+                        )
+                      ],
+                    )
                 ),
-                Row(
-                  mainAxisAlignment: MainAxisAlignment.end,
-                  children: [
-                    Container(
-                      child: Flexible(
-                          child: RichText(
-                            overflow: TextOverflow.ellipsis,
-                            maxLines: 1,
-                            strutStyle: StrutStyle(fontSize: 16.0),
-                            text: TextSpan(
-                                text: '저자: ${best[index]['author']}',
-                                style: TextStyle(
-                                    color: Colors.amber,
-                                    height: 1.4,
-                                    fontSize: 16.0,
-                                    fontFamily: 'Jua-Regular',)),
-                          )),
-                    ),
-                    SizedBox(width: 10,),
-                    Container(
-                      child: Flexible(
-                          child: RichText(
-                            overflow: TextOverflow.ellipsis,
-                            maxLines: 1,
-                            strutStyle: StrutStyle(fontSize: 16.0),
-                            text: TextSpan(
-                                text: '출판사: ${best[index]['publisher']}',
-                                style: TextStyle(
-                                    color: Colors.indigo,
-                                    height: 1.4,
-                                    fontSize: 16.0,
-                                    fontFamily: 'Jua-Regular')),
-                          )),
-                    ),
-                  ],
-                ),
-                Row(
-                  mainAxisAlignment: MainAxisAlignment.end,
-                  children: [
-                    Text('정가: ${best[index]['priceStandard']}원',
-                      style: const TextStyle(
-                          color: Colors.black,
-                      ),
-                    ),
-                    Text('  할인가: ${best[index]['priceSales']}원',
-                      style: const TextStyle(
-                        color: Colors.black,
-                      ),
-                    ),
-                  ],
-                )
               ],
             ),
           ),
