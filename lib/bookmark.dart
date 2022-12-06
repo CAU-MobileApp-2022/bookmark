@@ -19,7 +19,7 @@ class _BookmarkPageState extends State<BookmarkPage> {
 
     return Scaffold(
       appBar: AppBar(
-        title: const Text('Bookmark'),
+        title: const Text('북마크'),
       ),
       body: ListView(
         children: [
@@ -92,7 +92,7 @@ class BookmarkDetailPage extends StatelessWidget {
 
     return Scaffold(
       appBar: AppBar(
-        title: Text('Memo - ${args.title}'),
+        title: Text('북마크 [ ${args.title} ]'),
         leading:  IconButton(
           onPressed: () {
             Navigator.pop(context);
@@ -117,21 +117,21 @@ class BookmarkDetailPage extends StatelessWidget {
                 mainAxisAlignment: MainAxisAlignment.center,
 
                 children: [
-                  SizedBox(height: 55, width: 100,),
+                  SizedBox(height: 58, width: 100,),
                   Text('${args.title}',
                     style: TextStyle(
                       fontWeight: FontWeight.bold,
                       fontSize: 25,
                     ),
                   ),
-                  SizedBox(height: 55, width: 100,),
+                  SizedBox(height: 38, width: 100,),
                   Container(
                     constraints: BoxConstraints(maxWidth: 500),
                     child: Text('${args.memo}',
                       style: TextStyle(
                         height: 2,
                         fontWeight: FontWeight.bold,
-                        fontSize: 14,
+                        fontSize: 17,
                       ),
                     ),
                   ),

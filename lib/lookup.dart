@@ -28,7 +28,7 @@ class _LookUpPageState extends State<LookUpPage> {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: const Text('Lookup'),
+        title: const Text('책 목록'),
       ),
       body: ListView(
         children: [
@@ -64,7 +64,7 @@ class _LookUpPageState extends State<LookUpPage> {
                     }
 
                     },
-                  child: Text('Add new Book'),
+                  child: Text('등록하기'),
                 ),
               ],
         ),
