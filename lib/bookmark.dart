@@ -14,7 +14,7 @@ class _BookmarkPageState extends State<BookmarkPage> {
 
     final bookmarkList = [
       Bookmark( id: 1, title: "The Selfish Gene", author: "Richard Dawkins",memo: "매모메모메모메모"),
-      Bookmark( id: 2, title: "Design Patterns", author: "Erich Gamma, Richard Helm, Ralph Johnson, John Vlissides" , memo: "메모 123412341231231231sadfasdfasfasdfasdaasdfsdfasdfasdfasdfasdfsdfasdfasdffasdfasdfasdf23123123"),
+      Bookmark( id: 2, title: "Design Patterns", author: "Erich Gamma, Richard Helm, Ralph Johnso" , memo: "메모 123412341231231231sadfasdfasfasdfasdaasdfsdfasdfasdfasdfasdfsdfasdfasdffasdfasdfasdf23123123"),
     ];
 
     return Scaffold(
@@ -48,8 +48,12 @@ class _BookmarkPageState extends State<BookmarkPage> {
                                 fontSize: 30,
                                 fontWeight: FontWeight.bold,
                               ),
+                              maxLines:3,
                             ),
-                            Text(bookmarkList[index].author!),
+                            Text(bookmarkList[index].author!,
+                              maxLines:3,
+                              overflow: TextOverflow.ellipsis,
+                            ),
                           ],
                         ),
                         IconButton(

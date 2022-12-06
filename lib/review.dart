@@ -12,12 +12,12 @@ class ReviewPage extends StatefulWidget {
 class _ReviewPageState extends State<ReviewPage> {
   @override
   Widget build(BuildContext context) {
-    final bookreviewList = [
+    final bookReviewList = [
       BookReview( id: 1, title: "The Selfish Gene", author: "Richard Dawkins",review: "리뷰",rating: 1.5),
-      BookReview( id: 2, title: "Design Patterns", author: "Erich Gamma, Richard Helm, Ralph Johnson, John Vlissides" , review: "메모",rating: 4.0),
+      BookReview( id: 2, title: "Design Patterns", author: "Erich Gamma, Richard Helm, Ralph Johnson" , review: "메모",rating: 4.0),
     ];
     _onSelected(dynamic val) {
-      setState(() => bookreviewList.removeAt(val));
+      setState(() => bookReviewList.removeAt(val));
     }
     return Scaffold(
       appBar: AppBar(
@@ -28,11 +28,11 @@ class _ReviewPageState extends State<ReviewPage> {
           ListView.builder(
             scrollDirection: Axis.vertical,
             shrinkWrap: true ,
-            itemCount: bookreviewList.length,
+            itemCount: bookReviewList.length,
             itemBuilder: (context, index){
               return GestureDetector(
                 onTap: () {
-                  final bookreview = bookreviewList[index];
+                  final bookreview = bookReviewList[index];
                   Navigator.pushNamed(context, '/book-reviewDetail', arguments: bookreview);
                 },
                 child: Card(
@@ -45,13 +45,13 @@ class _ReviewPageState extends State<ReviewPage> {
                           crossAxisAlignment: CrossAxisAlignment.start,
                           children: <Widget>[
                             Text(
-                              '${bookreviewList[index].title}',
+                              '${bookReviewList[index].title}',
                               style: const TextStyle(
                                 fontSize: 30,
                                 fontWeight: FontWeight.bold,
                               ),
                             ),
-                            Text(bookreviewList[index].author!),
+                            Text(bookReviewList[index].author!),
                           ],
                         ),
                         PopupMenuButton(
