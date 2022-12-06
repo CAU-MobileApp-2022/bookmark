@@ -87,7 +87,7 @@ class _LookUpPageState extends State<LookUpPage> {
                 if (snapshot.connectionState == ConnectionState.waiting) {
                   return const Center(child: CircularProgressIndicator());
                 }
-                final docs = snapshot.data!.docs;
+                final docs = snapshot.data!.docs.where((element) => element.get('uid') == _authentication.currentUser!.uid).toList();
                 return ListView.builder(
                   itemCount: docs.length,
                   itemBuilder: (context, index) {

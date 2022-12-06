@@ -1,3 +1,5 @@
+import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_app/sidebar.dart';
 import 'package:smooth_star_rating_nsafe/smooth_star_rating.dart';
@@ -10,14 +12,35 @@ class ReviewPage extends StatefulWidget {
 }
 
 class _ReviewPageState extends State<ReviewPage> {
+  final _authentication = FirebaseAuth.instance;
+  User? loggedUser;
+
+  void getCurrentUser(){
+    try {
+      final user = _authentication.currentUser;
+      if (user != null) {
+        loggedUser = user;
+      }
+    } catch (e){
+      print(e);
+    }
+  }
+
+  @override
+  void initState() {
+    // TODO: implement initState
+    super.initState();
+    getCurrentUser();
+  }
+
   @override
   Widget build(BuildContext context) {
-    final bookReviewList = [
+    /*final bookReviewList = [
       BookReview( id: 1, title: "The Selfish Gene", author: "Richard Dawkins",review: "리뷰",rating: 1.5),
       BookReview( id: 2, title: "Design Patterns", author: "Erich Gamma, Richard Helm, Ralph Johnson" , review: "메모",rating: 4.0),
-    ];
+    ];*/
     _onSelected(dynamic val) {
-      setState(() => bookReviewList.removeAt(val));
+      //setState(() => bookReviewList.removeAt(val));
     }
     return Scaffold(
       appBar: AppBar(
@@ -25,53 +48,71 @@ class _ReviewPageState extends State<ReviewPage> {
       ),
       body: ListView(
         children: [
-          ListView.builder(
-            scrollDirection: Axis.vertical,
-            shrinkWrap: true ,
-            itemCount: bookReviewList.length,
-            itemBuilder: (context, index){
-              return GestureDetector(
-                onTap: () {
-                  final bookreview = bookReviewList[index];
-                  Navigator.pushNamed(context, '/book-reviewDetail', arguments: bookreview);
-                },
-                child: Card(
-                  child: Padding(
-                    padding: const EdgeInsets.all(10),
-                    child: Row(
-                      mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                      children: <Widget>[
-                        Column(
-                          crossAxisAlignment: CrossAxisAlignment.start,
+          StreamBuilder(
+            stream: FirebaseFirestore.instance.collection('books').orderBy('timestamp').snapshots(),
+            builder: (context, snapshot) {
+              final docs = snapshot.data!.docs.where((element) => element.get('uid') == _authentication.currentUser!.uid).toList();
+              return ListView.builder(
+                scrollDirection: Axis.vertical,
+                shrinkWrap: true ,
+                itemCount: docs.length,
+                itemBuilder: (context, index){
+                  return GestureDetector(
+                    onTap: () {
+                      final bookreview = BookReview( title: docs[index]['title'], author: docs[index]['author'],review: docs[index]['review'], rating: 5);
+                      Navigator.pushNamed(context, '/book-reviewDetail', arguments: bookreview);
+                    },
+                    child: Card(
+                      child: Padding(
+                        padding: const EdgeInsets.all(10),
+                        child: Row(
+                          mainAxisAlignment: MainAxisAlignment.spaceBetween,
                           children: <Widget>[
-                            Text(
-                              '${bookReviewList[index].title}',
-                              style: const TextStyle(
-                                fontSize: 30,
-                                fontWeight: FontWeight.bold,
-                              ),
+                            Column(
+                              crossAxisAlignment: CrossAxisAlignment.start,
+                              children: <Widget>[
+                                Container(
+                                  width: 300,
+                                  child: Text(
+                                    '${docs[index]['title']}',
+                                    style: TextStyle(
+                                      fontSize: 30,
+                                      fontWeight: FontWeight.bold,
+                                      overflow: TextOverflow.fade,
+                                    ),
+                                    maxLines:1,
+                                    softWrap: false,
+                                  ),
+                                ),
+                                Container(
+                                  width: 300,
+                                  child: Text(docs[index]['author']!,
+                                    maxLines:1,
+                                    softWrap: false,
+                                  ),
+                                ),
+                              ],
                             ),
-                            Text(bookReviewList[index].author!),
+                            PopupMenuButton(
+                              onSelected: _onSelected,
+                              icon: const Icon(Icons.more_vert),
+                              itemBuilder: (context) {
+                                return [
+                                  PopupMenuItem(
+                                    child: Text("삭제하기"),
+                                    value: index,
+                                  ),
+                                ];
+                              },
+                            ),
                           ],
                         ),
-                        PopupMenuButton(
-                          onSelected: _onSelected,
-                          icon: const Icon(Icons.more_vert),
-                          itemBuilder: (context) {
-                            return [
-                              PopupMenuItem(
-                                child: Text("삭제하기"),
-                                value: index,
-                              ),
-                            ];
-                          },
-                        ),
-                      ],
+                      ),
                     ),
-                  ),
-                ),
+                  );
+                },
               );
-            },
+            }
           ),
         ],
       ),
@@ -181,7 +222,7 @@ class BookReview {
   String? title;
   String? author;
   String? review;
-  var rating;
+  double rating;
 
   BookReview (
       {

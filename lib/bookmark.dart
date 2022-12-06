@@ -1,3 +1,5 @@
+import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_app/sidebar.dart';
 
@@ -9,13 +11,29 @@ class BookmarkPage extends StatefulWidget {
 }
 
 class _BookmarkPageState extends State<BookmarkPage> {
+  final _authentication = FirebaseAuth.instance;
+  User? loggedUser;
+
+  void getCurrentUser(){
+    try {
+      final user = _authentication.currentUser;
+      if (user != null) {
+        loggedUser = user;
+      }
+    } catch (e){
+      print(e);
+    }
+  }
+
+  @override
+  void initState() {
+    // TODO: implement initState
+    super.initState();
+    getCurrentUser();
+  }
+
   @override
   Widget build(BuildContext context) {
-
-    final bookmarkList = [
-      Bookmark( id: 1, title: "The Selfish Gene", author: "Richard Dawkins",memo: "매모메모메모메모"),
-      Bookmark( id: 2, title: "Design Patterns", author: "Erich Gamma, Richard Helm, Ralph Johnso" , memo: "메모 123412341231231231sadfasdfasfasdfasdaasdfsdfasdfasdfasdfasdfsdfasdfasdffasdfasdfasdf23123123"),
-    ];
 
     return Scaffold(
       appBar: AppBar(
@@ -23,52 +41,69 @@ class _BookmarkPageState extends State<BookmarkPage> {
       ),
       body: ListView(
         children: [
-          ListView.builder(
-            scrollDirection: Axis.vertical,
-            shrinkWrap: true ,
-            itemCount: bookmarkList.length,
-            itemBuilder: (context, index){
-              return GestureDetector(
-                onTap: () {
-                  final bookmark = bookmarkList[index];
-                  Navigator.pushNamed(context, '/bookmarkDetail', arguments: bookmark);
-                },
-                child: Card(
-                  child: Padding(
-                    padding: const EdgeInsets.all(10),
-                    child: Row(
-                      mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                      children: <Widget>[
-                        Column(
-                          crossAxisAlignment: CrossAxisAlignment.start,
+          StreamBuilder(
+            stream: FirebaseFirestore.instance.collection('books').orderBy('timestamp').snapshots(),
+            builder: (context, snapshot) {
+              if(snapshot.connectionState == ConnectionState.waiting){
+                return Center(child: CircularProgressIndicator());
+              }
+              final docs = snapshot.data!.docs.where((element) => element.get('uid') == _authentication.currentUser!.uid).toList();
+              return ListView.builder(
+                scrollDirection: Axis.vertical,
+                shrinkWrap: true ,
+                itemCount: docs.length,
+                itemBuilder: (context, index){
+                  return GestureDetector(
+                    onTap: () {
+                      final bookmark = Bookmark( title: docs[index]['title'], author: docs[index]['author'],memo: docs[index]['bookmark']);
+                      Navigator.pushNamed(context, '/bookmarkDetail', arguments: bookmark);
+                    },
+                    child: Card(
+                      child: Padding(
+                        padding: const EdgeInsets.all(10),
+                        child: Row(
+                          mainAxisAlignment: MainAxisAlignment.spaceBetween,
                           children: <Widget>[
-                            Text(
-                              '${bookmarkList[index].title}',
-                              style: TextStyle(
-                                fontSize: 30,
-                                fontWeight: FontWeight.bold,
-                              ),
-                              maxLines:3,
+                            Column(
+                              crossAxisAlignment: CrossAxisAlignment.start,
+                              children: <Widget>[
+                                Container(
+                                  width: 300,
+                                  child: Text(
+                                    '${docs[index]['title']}',
+                                    style: TextStyle(
+                                      fontSize: 30,
+                                      fontWeight: FontWeight.bold,
+                                      overflow: TextOverflow.fade,
+                                    ),
+                                    maxLines:1,
+                                    softWrap: false,
+                                  ),
+                                ),
+                                Container(
+                                  width: 300,
+                                  child: Text(docs[index]['author']!,
+                                    maxLines:1,
+                                    softWrap: false,
+                                  ),
+                                ),
+                              ],
                             ),
-                            Text(bookmarkList[index].author!,
-                              maxLines:3,
-                              overflow: TextOverflow.ellipsis,
-                            ),
+                            IconButton(
+                              icon: Icon(Icons.more_vert),
+                              onPressed: () {
+                                setState(() {
+                                });
+                              },
+                            )
                           ],
                         ),
-                        IconButton(
-                          icon: Icon(Icons.more_vert),
-                          onPressed: () {
-                            setState(() {
-                            });
-                          },
-                        )
-                      ],
+                      ),
                     ),
-                  ),
-                ),
+                  );
+                },
               );
-            },
+            }
           ),
         ],
       ),
