@@ -134,7 +134,7 @@ class BookElement extends StatelessWidget {
   final String? docId;
 
   _onSelected(dynamic val) {
-    FirebaseFirestore.instance.collection("books").doc(isMe).collection(isMe!).doc(docId!).delete();
+    FirebaseFirestore.instance.collection("books").doc(docId!).delete();
   }
   @override
   Widget build(BuildContext context) {
