@@ -41,7 +41,7 @@ class _LookUpPageState extends State<LookUpPage> {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: const Text('Lookup'),
+        title: const Text('책 목록'),
       ),
       body: Column(
         children: [
@@ -75,35 +75,36 @@ class _LookUpPageState extends State<LookUpPage> {
                       'review': "",
                     });
                     },
-                  child: const Text('Add new Book'),
+                  child: Text('등록하기'),
                 ),
               ],
-        ),
+            ),
           ),
-    Expanded(
-          child: StreamBuilder(
-            stream: FirebaseFirestore.instance.collection("books").orderBy('timestamp').snapshots(),
-            builder: (context, snapshot) {
-              if (snapshot.connectionState == ConnectionState.waiting) {
-                return const Center(child: CircularProgressIndicator());
-              }
-              final docs = snapshot.data!.docs;
-              return ListView.builder(
-                itemCount: docs.length,
-                itemBuilder: (context, index) {
-                  return BookElement(
-                    isMe: loggedUser!.uid,
-                    title: docs[index]['title'],
-                    author: docs[index]['author'],
-                    imageUrl: docs[index]['imageUrl'],
-                    bookmark: docs[index]['bookmark'],
-                    review: docs[index]['review'],
-                    docId: docs[index].id,
-                  );
-                },
-              );
-            },
-          )),
+          Expanded(
+            child: StreamBuilder(
+              stream: FirebaseFirestore.instance.collection("books").orderBy('timestamp').snapshots(),
+              builder: (context, snapshot) {
+                if (snapshot.connectionState == ConnectionState.waiting) {
+                  return const Center(child: CircularProgressIndicator());
+                }
+                final docs = snapshot.data!.docs;
+                return ListView.builder(
+                  itemCount: docs.length,
+                  itemBuilder: (context, index) {
+                    return BookElement(
+                      isMe: loggedUser!.uid,
+                      title: docs[index]['title'],
+                      author: docs[index]['author'],
+                      imageUrl: docs[index]['imageUrl'],
+                      bookmark: docs[index]['bookmark'],
+                      review: docs[index]['review'],
+                      docId: docs[index].id,
+                    );
+                  },
+                );
+              },
+            )
+          ),
         ],
       ),
       drawer: Drawer(
@@ -190,7 +191,7 @@ class BookElement extends StatelessWidget {
                 return [
                   PopupMenuItem(
                     value: docId,
-                    child: const Text("Delete"),
+                    child: Text("삭제하기"),
                   ),
                 ];
               },

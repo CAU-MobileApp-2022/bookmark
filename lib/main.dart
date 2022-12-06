@@ -33,6 +33,7 @@ class MyApp extends StatelessWidget {
     return MaterialApp(
       title: 'Flutter App',
       theme: ThemeData(
+        fontFamily: 'Jua-Regular',
         primarySwatch: Colors.amber,
       ),
       routes: {
@@ -44,6 +45,7 @@ class MyApp extends StatelessWidget {
         '/alarm': (context) => const AlarmPage(),
         '/alarmSetting': (context) => const AlarmSettingPage(),
         '/review': (context) => const ReviewPage(),
+        '/book-reviewDetail': (context) => const BookReviewDetailPage(),
         '/bestseller': (context) => const BestSellerPage(),
         '/barcode': (context) => const BarcodePage(),
         '/search': (context) => const SearchPage(),
@@ -84,7 +86,7 @@ class _MyHomePageState extends State<MyHomePage> {
       child: Scaffold(
         backgroundColor: Colors.transparent,
         appBar: AppBar(
-          title: const Text('Bookmark App'),
+          title: const Text('북마크 앱'),
           actions: [
             IconButton(
               icon: const Icon(Icons.add),
