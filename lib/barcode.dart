@@ -54,7 +54,7 @@ class _BarcodePageState extends State<BarcodePage> {
       _BookTitle = data['items'][0]['title'];
       _BookAuthor = data['items'][0]['author'];
       _BookUrl = data['items'][0]['image'];
-      book.id=0;
+      book.id=int.parse(_BookIsbn);
       book.title=_BookTitle;
       book.author=_BookAuthor;
       book.url=_BookUrl;

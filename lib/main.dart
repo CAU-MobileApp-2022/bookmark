@@ -48,7 +48,7 @@ class MyApp extends StatelessWidget {
         '/barcode': (context) => const BarcodePage(),
         '/search': (context) => const SearchPage(),
       },
-      /*home: StreamBuilder(
+      home: StreamBuilder(
         stream: FirebaseAuth.instance.authStateChanges(),
         builder: (context, snapshot) {
           if(snapshot.hasData) {
@@ -57,8 +57,8 @@ class MyApp extends StatelessWidget {
             return const LoginPage();
           }
         },
-      ),*/
-      home: const MyHomePage()
+      ),
+      //home: const MyHomePage()
     );
   }
 }
