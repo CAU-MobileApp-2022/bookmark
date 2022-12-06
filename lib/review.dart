@@ -51,6 +51,9 @@ class _ReviewPageState extends State<ReviewPage> {
           StreamBuilder(
             stream: FirebaseFirestore.instance.collection('books').orderBy('timestamp').snapshots(),
             builder: (context, snapshot) {
+              if(snapshot.connectionState == ConnectionState.waiting){
+                return Center(child: CircularProgressIndicator());
+              }
               final docs = snapshot.data!.docs.where((element) => element.get('uid') == _authentication.currentUser!.uid).toList();
               return ListView.builder(
                 scrollDirection: Axis.vertical,
