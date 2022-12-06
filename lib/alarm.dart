@@ -29,7 +29,7 @@ class _AlarmPageState extends State<AlarmPage> {
     return Scaffold(
       resizeToAvoidBottomInset: false,
       appBar: AppBar(
-        title: const Text('Alarm'),
+        title: const Text('알람'),
       ),
       body: ListView(
         children: [
@@ -43,7 +43,7 @@ class _AlarmPageState extends State<AlarmPage> {
                   onPressed: () {
                     Navigator.pushNamed(context, '/alarmSetting', arguments: {});
                     },
-                  child: Text('Add new Alarm'),
+                  child: Text('알람 +'),
                 ),
               ],
             ),
@@ -148,7 +148,7 @@ class _AlarmSettingPageState extends State<AlarmSettingPage> {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: const Text('Setting Alarm'),
+        title: const Text('알람 설정'),
         leading:  IconButton(
           onPressed: () {
             Navigator.pop(context);
@@ -191,7 +191,7 @@ class _AlarmSettingPageState extends State<AlarmSettingPage> {
               padding: const EdgeInsets.all(30.0),
               child: TextField(
                 decoration: InputDecoration(
-                  labelText: 'Alarm memo',
+                  labelText: '알람 이름',
                   border: OutlineInputBorder()
                 ),
                 controller: _alarmMemoController,
@@ -203,7 +203,7 @@ class _AlarmSettingPageState extends State<AlarmSettingPage> {
                 alarmInfoList.add(new AlarmInfo(_alarmMemoController.text, _dateTime!.hour, _dateTime!.minute, false));
                 final result = await _navigateAndDisplaySelection(context, 'alarm');
               },
-              child: Text('Enter')
+              child: Text('저장하기')
             ),
           ],
         ),
