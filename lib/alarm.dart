@@ -4,6 +4,8 @@ import 'package:flutter_alarm_clock/flutter_alarm_clock.dart';
 import 'package:flutter_app/sidebar.dart';
 import 'package:flutter_local_notifications/flutter_local_notifications.dart';
 import 'package:flutter_time_picker_spinner/flutter_time_picker_spinner.dart';
+import 'package:firebase_auth/firebase_auth.dart';
+import 'package:cloud_firestore/cloud_firestore.dart';
 
 class AlarmPage extends StatefulWidget {
   const AlarmPage({Key? key}) : super(key: key);
@@ -23,6 +25,25 @@ final FlutterLocalNotificationsPlugin flutterLocalNotificationsPlugin =
 
 
 class _AlarmPageState extends State<AlarmPage> {
+
+  final _authentication = FirebaseAuth.instance;
+  User? loggedUser;
+
+  @override
+  void initState() {
+    super.initState();
+    getCurrentUser();
+  }
+
+  void getCurrentUser() {
+    try {
+      final user = _authentication.currentUser;
+      if (user != null) {
+        loggedUser = user;
+      }
+    } catch (e) {}
+  }
+
 
   @override
   Widget build(BuildContext context) {
@@ -48,68 +69,28 @@ class _AlarmPageState extends State<AlarmPage> {
               ],
             ),
           ),
-          ListView.builder(
-            scrollDirection: Axis.vertical,
-            shrinkWrap: true,
-            itemCount: alarmInfoList.length,
-            itemBuilder: (context,index){
-              return Card(
-                child: Padding(
-                  padding: const EdgeInsets.all(10),
-                  child: Row(
-                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                    children: <Widget>[
-                      IconButton(
-                        icon: alarmInfoList[index].isActive
-                            ? Icon(Icons.alarm, color: Colors.deepOrange)
-                            : Icon(Icons.alarm_off),
-                        onPressed: () {
-                          setState(() {
-                            alarmInfoList[index].isActive = !alarmInfoList[index].isActive;
-                            if (alarmInfoList[index].isActive){
-                              alarmInfoList[index].activateAlarm();
-                            }
-                            else {
-                              alarmInfoList[index].dismissAlarm();
-                            }
-                          });
-                        },
-                      ),
-                      Column(
-                        crossAxisAlignment: CrossAxisAlignment.start,
-                        children: <Widget>[
-                          Text(alarmInfoList[index].name),
-                          Text(
-                            '${alarmInfoList[index].hour.toString()}:${alarmInfoList[index].minute.toString()}',
-                            style: TextStyle(
-                              fontSize: 30,
-                              fontWeight: FontWeight.bold,
-                            ),
-                          ),
-                        ],
-                      ),
-                      PopupMenuButton(
-                        icon: Icon(Icons.more_vert),
-                        onSelected: (value) {
-                           setState((){
-                             alarmInfoList[value].dismissAlarm();
-                             alarmInfoList.removeAt(value);
-                           });
-                        },
-                        itemBuilder: (BuildContext bc) {
-                          return [
-                            PopupMenuItem(
-                              child: Text("Delete"),
-                              value: index,
-                            ),
-                          ];
-                        },
-                      ),
-                    ],
-                  ),
-                ),
+          StreamBuilder(
+            stream: FirebaseFirestore.instance.collection('alarms').orderBy('timestamp').snapshots(),
+            builder: (context, snapshot) {
+              if(snapshot.connectionState == ConnectionState.waiting){
+                return Center(child: CircularProgressIndicator());
+              }
+              final docs = snapshot.data!.docs.where((element) => element.get('uid') == _authentication.currentUser!.uid).toList();
+              return ListView.builder(
+                scrollDirection: Axis.vertical,
+                shrinkWrap: true,
+                itemCount: docs.length,
+                itemBuilder: (context,index){
+                  return AlarmElement(
+                    name : docs[index]['name'],
+                    hour : docs[index]['hour'],
+                    minute : docs[index]['minute'],
+                    isActive : docs[index]['isActive'],
+                    docId: docs[index].id,
+                  );
+                },
               );
-            },
+            }
           )
         ],
       ),
@@ -139,9 +120,9 @@ class _AlarmSettingPageState extends State<AlarmSettingPage> {
   final _alarmMemoController = TextEditingController();
 
 
-  Future<AlarmInfo> _navigateAndDisplaySelection(BuildContext context, String name) async {
+  Future _navigateAndDisplaySelection(BuildContext context, String name) async {
     return await Navigator.pushNamed(
-        context, '/$name', arguments: {}) as AlarmInfo;
+        context, '/$name', arguments: {});
   }
 
   @override
@@ -200,7 +181,21 @@ class _AlarmSettingPageState extends State<AlarmSettingPage> {
             SizedBox(height: 20),
             ElevatedButton(
               onPressed: () async {
-                alarmInfoList.add(new AlarmInfo(_alarmMemoController.text, _dateTime!.hour, _dateTime!.minute, false));
+                //alarmInfoList.add(new AlarmInfo(_alarmMemoController.text, _dateTime!.hour, _dateTime!.minute, false));
+                final currentUser = FirebaseAuth.instance.currentUser;
+                    final currentUserName = await FirebaseFirestore.instance
+                        .collection('user')
+                        .doc(currentUser!.uid)
+                        .get();
+                    FirebaseFirestore.instance.collection("alarms").add({
+                      'userName': currentUserName.data()!['userName'],
+                      'uid': currentUser.uid,
+                      'timestamp' : Timestamp.fromDate(_dateTime!),
+                      'name': _alarmMemoController.text,
+                      'isActive' : false,
+                      'hour' : _dateTime!.hour,
+                      'minute' : _dateTime!.minute,
+                    });
                 final result = await _navigateAndDisplaySelection(context, 'alarm');
               },
               child: Text('저장하기')
@@ -222,33 +217,93 @@ class _AlarmSettingPageState extends State<AlarmSettingPage> {
   }
 }
 
-class AlarmInfo {
-  static int global_alarm_id = 0;
-  int id = 0;
-  String name;
-  int hour;
-  int minute;
-  bool isActive;
+class AlarmElement extends StatelessWidget {
+  final String? docId;
+  final String? name;
+  final int? hour;
+  final int? minute;
+  bool? isActive;
+  final id = 0;
 
-  AlarmInfo (
+  AlarmElement({
+    Key? key,
+    this.docId,
     this.name,
     this.hour,
     this.minute,
     this.isActive,
-  ){
-    id  = AlarmInfo.global_alarm_id;
-    AlarmInfo.global_alarm_id += 1;
+  }) : super(key: key){
+
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    return Card(
+      child: Padding(
+        padding: const EdgeInsets.all(10),
+        child: Row(
+          mainAxisAlignment: MainAxisAlignment.spaceBetween,
+          children: <Widget>[
+            IconButton(
+              icon: isActive!
+                  ? Icon(Icons.alarm, color: Colors.deepOrange)
+                  : Icon(Icons.alarm_off),
+              onPressed: () {
+                isActive = isActive == true ? false : true;
+                if (isActive!){
+                  setAlarm(true);
+                }
+                else {
+                  setAlarm(false);
+                }
+              },
+            ),
+            Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: <Widget>[
+                Text(name!),
+                Text(
+                  '${hour.toString()} : ${minute.toString()} : ',
+                  style: TextStyle(
+                    fontSize: 30,
+                    fontWeight: FontWeight.bold,
+                  ),
+                ),
+              ],
+            ),
+            PopupMenuButton(
+              icon: Icon(Icons.more_vert),
+              onSelected: (value) {
+              },
+              itemBuilder: (BuildContext bc) {
+                return [
+                  PopupMenuItem(
+                    child: Text("Delete"),
+                    onTap: (){
+                      dismissAlarm();
+                    },
+                  ),
+                ];
+              },
+            ),
+          ],
+        ),
+      ),
+    );
   }
 
   static Future<void> alarmCallback() async{
     print('test');
   }
 
-  void activateAlarm() {
-    print("Alarm set: $name $id");
+  void setAlarm(bool active) {
+    FirebaseFirestore.instance.collection("alarms").doc(docId!).update({
+      'isActive': active,
+    }
+    );
     DateTime now = DateTime.now();
-    //DateTime targetTime = DateTime(now.year, now.month,now.day, hour, minute);
-    DateTime targetTime = now.add(Duration(seconds: 1));
+    DateTime targetTime = DateTime(now.year, now.month,now.day, hour!, minute!);
+    //DateTime targetTime = now.add(Duration(seconds: 1));
     AndroidAlarmManager.oneShotAt(
       targetTime,
       id,
@@ -260,7 +315,9 @@ class AlarmInfo {
   }
 
   void dismissAlarm() {
+    FirebaseFirestore.instance.collection("alarms").doc(docId!.toString()).delete();
     print("Alarm dismissed: $name");
     AndroidAlarmManager.cancel(id);
   }
 }
+
