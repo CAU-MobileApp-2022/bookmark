@@ -55,7 +55,7 @@ class _BookmarkPageState extends State<BookmarkPage> {
                 itemBuilder: (context, index){
                   return GestureDetector(
                     onTap: () {
-                      final bookmark = Bookmark(title: docs[index]['title'], author: docs[index]['author'],memo: docs[index]['bookmark']);
+                      final bookmark = Bookmark(title: docs[index]['title'], author: docs[index]['author'],bookmark: docs[index]['bookmark'], docId:docs[index].id);
                       Navigator.pushNamed(context, '/bookmarkDetail', arguments: bookmark);
                     },
                     child: Card(
@@ -170,7 +170,7 @@ class BookmarkDetailPage extends StatelessWidget {
                       constraints: BoxConstraints(maxWidth: 500),
                       child: Padding(
                         padding: const EdgeInsets.fromLTRB(20.0,8,20,8),
-                        child: Text('${args.memo}',
+                        child: Text('${args.bookmark}',
                           style: TextStyle(
                             height: 2,
                             fontWeight: FontWeight.bold,
@@ -210,9 +210,15 @@ class BookmarkDetailPage extends StatelessWidget {
 }
 
 
-class BookmarkEditPage extends StatelessWidget {
+class BookmarkEditPage extends StatefulWidget {
   const BookmarkEditPage({Key? key}) : super(key: key);
 
+  @override
+  State<BookmarkEditPage> createState() => _BookmarkEditPageState();
+}
+
+class _BookmarkEditPageState extends State<BookmarkEditPage> {
+  final _bookmarkEditController = TextEditingController();
 
   @override
   Widget build(BuildContext context) {
@@ -261,7 +267,7 @@ class BookmarkEditPage extends StatelessWidget {
                         padding: const EdgeInsets.fromLTRB(20.0,8,20,8),
                         child: TextFormField(
                           keyboardType: TextInputType.multiline,
-                          initialValue:'${args.memo}',
+                          initialValue:'${args.bookmark}',
                           maxLines: 8,
                           style: TextStyle(
                             height: 2,
@@ -282,6 +288,10 @@ class BookmarkEditPage extends StatelessWidget {
         padding: EdgeInsets.fromLTRB(0, 0, 50, 50),
         child: FloatingActionButton(
           onPressed: () async {
+            FirebaseFirestore.instance.collection("books").doc(args.docId).update({
+              'bookmark': _bookmarkEditController.text,
+            });
+            DateTime now = DateTime.now();
             Navigator.pop(context);
           },
           child: Text('save'),
@@ -306,13 +316,16 @@ class Bookmark {
   int? id;
   String? title;
   String? author;
-  String? memo;
+  String? bookmark;
+  final String? docId;
 
   Bookmark (
     {
     this.id,
     required this.title,
     required this.author,
-    required this.memo,}
+    required this.bookmark,
+    this.docId
+    }
   );
 }
