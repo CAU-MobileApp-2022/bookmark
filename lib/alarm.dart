@@ -119,7 +119,6 @@ class _AlarmSettingPageState extends State<AlarmSettingPage> {
   DateTime? _dateTime;
   final _alarmMemoController = TextEditingController();
 
-
   Future _navigateAndDisplaySelection(BuildContext context, String name) async {
     return await Navigator.pushNamed(
         context, '/$name', arguments: {});
@@ -263,7 +262,7 @@ class AlarmElement extends StatelessWidget {
               children: <Widget>[
                 Text(name!),
                 Text(
-                  '${hour.toString()} : ${minute.toString()} : ',
+                  '${hour.toString()} : ${minute.toString()}',
                   style: TextStyle(
                     fontSize: 30,
                     fontWeight: FontWeight.bold,
